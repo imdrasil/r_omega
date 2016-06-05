@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+    <title>Screenshotter test</title>
+    <script src="assets/katex/katex.min.js" type="text/javascript"></script>
+    <link href="assets/katex/katex.min.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        #math, #pre, #post {
+            font-size: 4em;
+        }
+        body {
+            font-family: "DejaVu Serif",serif;
+        }
+    </style>
+</head>
+<body>
+<p><span id="mykatex1"></span></p>
+<script>
+    katex.render("f(a,b,c) = (a^2+b^2+c^2)^3", mykatex1);
+</script>
+</body>
+</html>

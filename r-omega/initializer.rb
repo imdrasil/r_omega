@@ -4,6 +4,10 @@ class App
       @root ||= File.dirname(__FILE__)
     end
 
+    def template_path
+      @template_path = File.join(root, 'templates')
+    end
+
     def load
       %w(lib models workers).each do |d|
         $LOAD_PATH.unshift File.join(File.dirname(__FILE__), d)

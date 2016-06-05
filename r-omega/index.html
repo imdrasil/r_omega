@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head lang="ua">
+    <meta charset="UTF-8">
+    <title>Генерація вхідного файлу</title>
+    <script src="assets/vue.js"></script>
+    <link rel="stylesheet" href="assets/bootstrap.min.css">
+    <script>
+        String.prototype.supplant = function (o) {
+            return this.replace(/{([^{}]*)}/g,
+                    function (a, b) {
+                        var r = o[b];
+                        return typeof r === 'string' || typeof r === 'number' ? r : a;
+                    }
+            );
+        };
+    </script>
+</head>
+<body>
+<div>
+    <H3>Task generator</H3>
+    <form id="main_form" v-on:submit="download($event)">
+        <div class="form-group">
+            <label for="task_number">Кількість варіантів</label>
+            <input type="number" class="form-control" id="task_number" min="1" max="150" v-model="task_count">
+        </div>
+        <div v-for="task in tasks">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" v-model="task.hand_mod">
+                    Ввести матрицю вручну?
+                </label>
+            </div>
+            <div class="form-group" v-if="task.hand_mod">
+                <label>Матриця значень критеріїв</label>
+                <textarea v-model="task.matrix" class="form-control" rows="4"></textarea>
+                <span class="help-block">Матрицю потрібно вводити по рядкам і елементи розділяти пробілами</span>
+            </div>
+            <div v-else>
+                <div class="form-group">
+                    <label>Кількість альтернатив</label>
+                    <input type="number" class="form-control" v-model="task.alt_count">
+                </div>
+                <div class="form-group">
+                    <label>Кількість критеріїв</label>
+                    <input type="number" class="form-control" v-model="task.crit_count">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Впорядкування альтернатив</label>
+                <select v-model="task.type" class="form-control">
+                    <option v-for="opt in criteria_map_types" :value="opt.name">{{ opt.ua }}</option>
+                </select>
+            </div>
+
+            <hr>
+        </div>
+        <button :click="generate">Згенерувати файл</button>
+    </form>
+</div>
+<script>
+    var generator = new Vue({
+        el: '#main_form',
+        data: {
+            task_count: 0,
+            tasks: [],
+            criteria_map_types: [
+                {
+                    ua: 'еквівалентні',
+                    name: 'equivalence'
+                },
+                {
+                    ua: 'строго впорядковані',
+                    name: 'strict'
+                },
+                {
+                    ua: 'утворюються квазіпорядок',
+                    name: 'quazy'
+                }
+            ],
+            can_parse: false
+        },
+        watch: {
+            task_count: function(val, oldVal){
+                if(val > oldVal){
+                    this.addTask(val - oldVal)
+                } else if(val < oldVal){
+                    this.removeTask(oldVal - val)
+                }
+            }
+        },
+        methods: {
+            addTask: function(count){
+                for(var i=0; i < count; i++){
+                    this.tasks.push({
+                        alt_count: 4,
+                        crit_count: 4,
+                        type: this.criteria_map_types[0].name,
+                        hand_mod: false,
+                        matrix: '',
+                        non_zero_count: 0,
+                        use_non_zero: false
+                    });
+                }
+            },
+            removeTask: function(count) {
+               this.tasks.splice(this.tasks.length - count - 1, count)
+            },
+            generate: function(){
+                this.can_parse = true;
+                var buf = "{0}\n".supplant([this.task_count]);
+                for(var i = 0; i < this.task_count; i++){
+                    var task = this.tasks[i];
+                    buf += "{0}\n{1}\n{2}\n".supplant([task.type]);
+                    buf += "{0}\n".supplant([task.hand_mod ? 1 : 0]);
+                    if(task.hand_mod){
+                        if(!this.isMatrixValid(task.matrix)){
+                            this.alert();
+                            return '';
+                        }
+                        buf += "{0}".supplant([task.matrix]);
+                    } else {
+                        buf += "{0}\n{1}\n".supplant([task.alt_count, task.crit_count])
+                    }
+                }
+                console.log(buf)
+                return buf;
+            },
+            download: function(event){
+                var element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.generate()));
+                if(this.can_parse){
+                    element.setAttribute('download', 'test.txt');
+
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+
+                    element.click();
+
+                    document.body.removeChild(element);
+                }
+                event.preventDefault();
+            },
+            isMatrixValid: function(matrix){
+                var lines = matrix.split("\n");
+                if(lines.length == 0) {
+                    return false
+                }
+                var size = -1;
+                for(var i = 0; i < lines.length; i++){
+                    var line = lines[i];
+                    var cells = line.split(' ');
+                    var count = cells.length;
+                    if(size == -1 && count != 0) {
+                        size = count;
+                    } else if(size != count) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            alert: function(){
+                alert('Помилка при введені матриці');
+                this.can_parse = false;
+            }
+        }
+    })
+</script>
+</body>
+</html>
