@@ -9,7 +9,7 @@ class App
     end
 
     def load
-      %w(lib models workers).each do |d|
+      %w(lib decorators serializers).each do |d|
         $LOAD_PATH.unshift File.join(File.dirname(__FILE__), d)
         Dir.glob("#{d}/**/*.rb").each do |f|
           require File.expand_path(f, root)

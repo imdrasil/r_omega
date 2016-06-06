@@ -1,0 +1,22 @@
+<div>
+  <h3>Варіант <%= @index + 1 %></h3>
+  <p>Оскільки критерії <%= CriteriaMapDecorator.criteria_type_name(@current_relation.map) %>, то за формулою</p>
+  <p>
+    <%= CriteriaMapDecorator.I_formula_html(@current_relation.map) %>
+  </p>
+  <p>симетрична частина відношення виглядатиме:</p>
+  <div>
+    <%= RelationDecorator.to_table(@current_relation.symetric_part) %>
+  </div>
+  <p>а асиметрична частина за формулою</p>
+  <p class="math"><%= CriteriaMapDecorator.P_formula_html(@current_relation.map) %></p>
+  <p>матиме вигляд:</p>
+  <div>
+    <%= RelationDecorator.to_table(@current_relation.asymetric_part) %>
+  </div>
+  <p>Тому відношення виглядатиме:</p>
+  <div>
+    <%= RelationDecorator.to_table(@current_relation) %>
+  </div>
+  <% %>
+</div>

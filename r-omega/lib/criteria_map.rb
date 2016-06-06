@@ -1,19 +1,18 @@
 class CriteriaMap
-  attr_accessor :map,
-                :classes, # [Range]
-                :type
+  attr_accessor :map, :classes, :type
 
   ACCEPTABLE_TYPES = %i(equivalence strict_order quasy_order).freeze
 
-  def initialize(options)
-    if options[:file_path]
-      @map, @classes, @type = load_from_file(file_path)
-      @map = convert_map(@map)
-    else
-      @classes = options[:classes] || [0...options[:map].first.size]
-      @type = options[:type]
-      @map = convert_map(options[:map])
+  ACCEPTABLE_TYPES.each do |t|
+    define_method("#{t}?") do
+      @type == t
     end
+  end
+
+  def initialize(options)
+    @classes = options[:classes] || [0...options[:map].first.size]
+    @type = options[:type]
+    @map = convert_map(options[:map])
 
     raise Exception if !ACCEPTABLE_TYPES.include?(@type) || @map.nil? || @map.empty?
   end
@@ -57,18 +56,48 @@ class CriteriaMap
   end
 
   class << self
-    def build_series(file_path)
-      lines = File.readlines(file_path)
-      # TODO: finish
+    def build_series(options)
+      if options[:directory]
+        Dir[File.join(options[:file_name], '*.txt')].map do |path|
+          parse_file(path)
+        end.flatten
+      else
+        parse_file(options[:file_name])
+      end
+    end
+
+    def parse_file(path) # TODO: need checking
+      arr = []
+      File.open(path, 'r') do |f|
+        count = f.gets
+        arr = count.times.map do
+                alt = f.gets.to_i
+                crit = f.gets.to_i
+                type = f.gets.to_sym
+                matrix = crit.times.map { f.gets.split(' ').map(&:to_i) }
+                classes = parse_classes_from_file(f)
+                CriteriaMap.new(classes: classes, map: matrix, type: type)
+              end
+      end
+      arr
+    end
+
+    private
+
+    def parse_classes_from_file(file)
+      if type == :quasy_order
+        temp = file.gets.split(' ').map(&:to_i)
+        sum = 0
+        temp.map do |i|
+          range = sum...(sum + i)
+          sum += i
+          range
+        end
+      end
     end
   end
 
   private
-
-  def load_from_file(file_path)
-    File.readlines(file_path)
-    # TODO: finish
-  end
 
   def convert_map(arr)
     case type

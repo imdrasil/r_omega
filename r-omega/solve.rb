@@ -1,10 +1,24 @@
+require 'optparse'
 require_relative 'initializer'
 
-cm = CriteriaMap.new(type: :quasy_order,
-                     map: [[5, 7, 3, 2, 7, 4],
-                           [5, 4, 3, 2, 3, 8],
-                           [6, 3, 7, 9, 10, 12]],
-                     classes: [0..1, 2..4, 5..5])
-puts cm.print
-ro = ROmega.new(cm)
-puts ro.print
+def parse_params
+  options = {}
+  OptionParser.new do |opts|
+    opts.banner = 'Usage: solve.rb [options]'
+
+    opts.on("-v", "--[no-]verbose", "Run verbosely") do |f|
+      options[:verbose] = f
+    end
+    opts.on('-s', '--separate', 'Writes each task to separate file') { |f| options[:separate] = f }
+    opts.on('-d', '--directory', 'Use as input all files from directory') { |f| options[:directory] = f }
+  end.parse!
+  options[:file_name] = ARGV[0]
+  options[:destination_path] = ARGV[1] || App.root
+  options
+end
+
+options = parse_params
+criteria_maps = CriteriaMap.build_series(options)
+r_omegas = criteria_maps.map { |map| ROmega.new(map) }
+serializer = ROmegaSerializer.new(r_omegas, options)
+serializer.serialize

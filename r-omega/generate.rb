@@ -1,11 +1,3 @@
-# кількість задач
-# кількість альтернатив
-# кількість критеріїв
-# тип
-# розбиття клсасів
-# кількість ненульових елементів
-#====
-# матриця ручна
 require 'optparse'
 require_relative 'initializer'
 
@@ -21,6 +13,7 @@ def parse_params
   end.parse!
   options[:file_name] = ARGV[0]
   options[:destination_path] = ARGV[1] || App.root
+  options
 end
 
 options = parse_params

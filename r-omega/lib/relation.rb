@@ -5,6 +5,20 @@ class Relation
     @graph = map
   end
 
+  def symetric_part
+    new_graph = graph.each_with_index.map do |row, i|
+      row.each_with_index.map { |cel, j| cel == 1 && graph[j][i] == 1 ? 1 : 0 }
+    end
+    Relation.new(new_graph)
+  end
+
+  def asymetric_part
+    new_graph = graph.each_with_index.map do |row, i|
+      row.each_with_index.map { |cel, j| cel == 1 && graph[j][i] == 0 ? 1 : 0 }
+    end
+    Relation.new(new_graph)
+  end
+
   def size
     @size ||= @graph.size
   end

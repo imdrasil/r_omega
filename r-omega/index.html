@@ -52,7 +52,18 @@
                     <option v-for="opt in criteria_map_types" :value="opt.name">{{ opt.ua }}</option>
                 </select>
             </div>
-
+            <div class="form-group" v-if="showClasses($index)">
+                <div>
+                    <div v-for="n in task.classes" track-by="$index">
+                        <label>
+                            Клас {{ $index + 1 }}
+                        </label>
+                        <input type="number" v-model="n" class="form-control">
+                    </div>
+                </div>
+                <button type="button" @click="addClass($index)" class="btn btn-default">Додати клас</button>
+                <span class="help-block">У поля вводяться кількість елементів що входять у клас. Важливість класів має неспадний характер. Елементи класу беруться підряд.</span>
+            </div>
             <hr>
         </div>
         <button :click="generate">Згенерувати файл</button>
@@ -71,11 +82,11 @@
                 },
                 {
                     ua: 'строго впорядковані',
-                    name: 'strict'
+                    name: 'strict_order'
                 },
                 {
-                    ua: 'утворюються квазіпорядок',
-                    name: 'quazy'
+                    ua: 'утворюють квазіпорядок',
+                    name: 'quasy_order'
                 }
             ],
             can_parse: false
@@ -99,7 +110,8 @@
                         hand_mod: false,
                         matrix: '',
                         non_zero_count: 0,
-                        use_non_zero: false
+                        use_non_zero: false,
+                        classes: []
                     });
                 }
             },
@@ -111,19 +123,23 @@
                 var buf = "{0}\n".supplant([this.task_count]);
                 for(var i = 0; i < this.task_count; i++){
                     var task = this.tasks[i];
-                    buf += "{0}\n{1}\n{2}\n".supplant([task.type]);
+                    buf += "{0}\n{1}\n{2}\n".supplant([task.type, this.alternativeCount(i), this.criteriaCount(i)]);
                     buf += "{0}\n".supplant([task.hand_mod ? 1 : 0]);
                     if(task.hand_mod){
                         if(!this.isMatrixValid(task.matrix)){
                             this.alert();
                             return '';
                         }
-                        buf += "{0}".supplant([task.matrix]);
-                    } else {
-                        buf += "{0}\n{1}\n".supplant([task.alt_count, task.crit_count])
+                        buf += "{0}\n".supplant([task.matrix]);
+                    }
+                    if(this.showClasses(i)){
+                        if(this.isClassesValid(i)){
+                            buf += "{0}\n".supplant([task.classes.join(' ')]);
+                        } else {
+                            this.alert('classes');
+                        }
                     }
                 }
-                console.log(buf)
                 return buf;
             },
             download: function(event){
@@ -159,9 +175,45 @@
                 }
                 return true;
             },
-            alert: function(){
-                alert('Помилка при введені матриці');
+            alert: function(type){
+                if(type == 'matrix') {
+                    alert('Помилка при введені матриці');
+                } else if(type == 'classes') {
+                    alert('Помилка при вказуванні кількості елементів класу.')
+                }
                 this.can_parse = false;
+            },
+            showClasses: function(index){
+                return this.tasks[index].type == 'quasy_order';
+            },
+            addClass: function(index){
+                console.log(index);
+                this.tasks[index].classes.push(1);
+            },
+            isClassesValid: function(index){
+                var task = this.tasks[index];
+                var classes = task.classes;
+                var sum = 0;
+                for(var i in classes){
+                    sum += classes[i] * 1;
+                }
+                return sum == this.criteriaCount(index);
+            },
+            criteriaCount: function(index){
+                var task = this.tasks[index];
+                if(task.hand_mod){
+                    return task.map.split("\n").split(' ').length;
+                } else {
+                    return task.crit_count;
+                }
+            },
+            alternativeCount: function(index){
+                var task = this.tasks[index];
+                if(task.hand_mod){
+                    return task.map.split("\n").length;
+                } else {
+                    return task.alt_count;
+                }
             }
         }
     })
