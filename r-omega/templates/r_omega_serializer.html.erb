@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+  <meta charset="utf-8">
   <title>Розвязання</title>
   <style type="text/css">
     #math, #pre, #post {
@@ -16,7 +17,7 @@
     <h3>Розвязання завдань по пошуку відношення R-омега</h3>
     <span>Розвязання основане на теорії з книги</span>
   </div>
-  <%= @partials.each do |partial| %>
+  <% @partials.each do |partial| %>
     <%= partial %>
     <hr>
   <% end %>

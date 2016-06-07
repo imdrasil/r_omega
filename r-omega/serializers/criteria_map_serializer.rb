@@ -26,13 +26,13 @@ class CriteriaMapSerializer < Serializer
     txt_partials = @maps.map { |map| txt_partial_render(map) }
     if separate_files?
       txt_partials.each_with_index do |partial, i|
-        File.new(File.join(destination_folder, "input_#{i}.txt"), 'w') do |f|
+        File.open(File.join(destination_folder, "input_#{i}.txt"), 'w') do |f|
           f.write("1\n")
           f.write(partial)
         end
       end
     else
-      File.new(File.join(destination_folder, 'input.txt'), 'w') do |f|
+      File.open(File.join(destination_folder, 'input.txt'), 'w') do |f|
         f.write("#{txt_partials.count}\n")
         f.write(txt_partials.join("\n"))
       end

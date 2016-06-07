@@ -69,13 +69,13 @@ class CriteriaMap
     def parse_file(path) # TODO: need checking
       arr = []
       File.open(path, 'r') do |f|
-        count = f.gets
+        count = f.gets.to_i
         arr = count.times.map do
                 alt = f.gets.to_i
                 crit = f.gets.to_i
-                type = f.gets.to_sym
+                type = f.gets.strip.to_sym
                 matrix = crit.times.map { f.gets.split(' ').map(&:to_i) }
-                classes = parse_classes_from_file(f)
+                classes = parse_classes_from_file(f, type)
                 CriteriaMap.new(classes: classes, map: matrix, type: type)
               end
       end
@@ -84,7 +84,7 @@ class CriteriaMap
 
     private
 
-    def parse_classes_from_file(file)
+    def parse_classes_from_file(file, type)
       if type == :quasy_order
         temp = file.gets.split(' ').map(&:to_i)
         sum = 0
@@ -100,6 +100,7 @@ class CriteriaMap
   private
 
   def convert_map(arr)
+    puts type
     case type
       when :equivalence
         arr.map { |row| [row.inject(&:+)] }

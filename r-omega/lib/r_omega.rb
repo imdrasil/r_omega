@@ -1,7 +1,7 @@
 require 'relation'
 
 class ROmega < Relation
-  attr_accessor :graph
+  attr_accessor :map
 
   def initialize(criteria_map)
     @map = criteria_map

@@ -12,9 +12,10 @@ class RelationDecorator
     end
 
     def to_table(rel)
+      byebug
       %Q(
         <table>
-        #{rel.graph.map { |row| '<tr>' + row.map { |cel| "<td>#{cel}</td>" } + '</tr>' }.join("\n")}
+        #{rel.graph.map { |row| '<tr>' + row.map { |cel| "<td>#{cel}</td>" }.join(' ') + '</tr>' }.join("\n")}
         </table>
       )
     end

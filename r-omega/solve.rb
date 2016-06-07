@@ -1,5 +1,6 @@
 require 'optparse'
 require_relative 'initializer'
+require 'byebug'
 
 def parse_params
   options = {}
@@ -18,6 +19,10 @@ def parse_params
 end
 
 options = parse_params
+if options[:file_name].nil?
+  puts 'Error! You must give input file or directory'
+  return -1
+end
 criteria_maps = CriteriaMap.build_series(options)
 r_omegas = criteria_maps.map { |map| ROmega.new(map) }
 serializer = ROmegaSerializer.new(r_omegas, options)

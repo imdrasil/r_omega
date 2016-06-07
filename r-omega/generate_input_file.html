@@ -184,23 +184,23 @@
                 this.can_parse = false;
             },
             showClasses: function(index){
-                return this.tasks[index].type == 'quasy_order';
+                return this.tasks[generate_input_file].type == 'quasy_order';
             },
             addClass: function(index){
-                console.log(index);
-                this.tasks[index].classes.push(1);
+                console.log(generate_input_file);
+                this.tasks[generate_input_file].classes.push(1);
             },
             isClassesValid: function(index){
-                var task = this.tasks[index];
+                var task = this.tasks[generate_input_file];
                 var classes = task.classes;
                 var sum = 0;
                 for(var i in classes){
                     sum += classes[i] * 1;
                 }
-                return sum == this.criteriaCount(index);
+                return sum == this.criteriaCount(generate_input_file);
             },
             criteriaCount: function(index){
-                var task = this.tasks[index];
+                var task = this.tasks[generate_input_file];
                 if(task.hand_mod){
                     return task.map.split("\n").split(' ').length;
                 } else {
@@ -208,7 +208,7 @@
                 }
             },
             alternativeCount: function(index){
-                var task = this.tasks[index];
+                var task = this.tasks[generate_input_file];
                 if(task.hand_mod){
                     return task.map.split("\n").length;
                 } else {

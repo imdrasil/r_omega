@@ -25,11 +25,11 @@ class CriteriaMapDecorator
     end
 
     def I_formula_html(map)
-      i_formulas[map.type] ||= File.open(File.join(App.template_path, 'formulas', FORMULA_FILES[:i][map.type]))
+      i_formulas[map.type] ||= File.open(File.join(App.template_path, 'formulas', FORMULA_FILES[:i][map.type])).read
     end
 
     def P_formula_html(map)
-      p_formulas[map.type] ||= File.open(File.join(App.template_path, 'formulas', FORMULA_FILES[:p][map.type]))
+      p_formulas[map.type] ||= File.open(File.join(App.template_path, 'formulas', FORMULA_FILES[:p][map.type])).read
     end
 
     def formulas

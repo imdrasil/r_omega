@@ -1,7 +1,7 @@
 require 'erb'
 
 class Serializer
-  def initializer(options)
+  def initialize(options)
     @options = options
   end
 
@@ -32,15 +32,15 @@ class Serializer
 
   private
 
-  def parse_erb(file)
-    ERB.new(file, 0, '>').result
+  def parse_erb(file, b, vars = '_erbout')
+    ERB.new(file, 0, '>', vars).result(b)
   end
 
   def partial_template_file
-    @_partial_template = File.open(File.join(App.template_path, partial_template_name)).read
+    @_partial_template ||= File.open(File.join(App.template_path, partial_template_name)).read
   end
 
   def template_file
-    @_template = File.open(File.join(App.template_path, template_name)).read
+    @_template ||= File.open(File.join(App.template_path, template_name)).read
   end
 end
