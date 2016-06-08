@@ -18,6 +18,5 @@ end
 
 options = parse_params
 factory = CriteriaMapFactory.new(options[:file_name])
-serializer = CriteriaMapSerializer.new(factory.create, options)
 
 
