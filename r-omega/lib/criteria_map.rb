@@ -100,7 +100,6 @@ class CriteriaMap
   private
 
   def convert_map(arr)
-    puts type
     case type
       when :equivalence
         arr.map { |row| [row.inject(&:+)] }

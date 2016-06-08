@@ -1,6 +1,5 @@
 require 'optparse'
 require_relative 'initializer'
-require 'byebug'
 
 def parse_params
   options = {}

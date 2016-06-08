@@ -12,12 +12,15 @@ class RelationDecorator
     end
 
     def to_table(rel)
-      byebug
       %Q(
         <table>
         #{rel.graph.map { |row| '<tr>' + row.map { |cel| "<td>#{cel}</td>" }.join(' ') + '</tr>' }.join("\n")}
         </table>
       )
+    end
+
+    def r_omega
+      @_r_omega ||= File.open(File.join(App.template_path, 'formulas', 'r_omega.html')).read
     end
   end
 end
