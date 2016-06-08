@@ -16,9 +16,16 @@ class CriteriaMapFactory
   		@n = @file.gets.chomp.to_i
   		@range = [0...@n]
   		
-  		@generate = @file.gets.chomp.to_i
-  		if @generate == 1
+  		@hand_mode = @file.gets.chomp.to_i
+  		if @hand_mode == 1
   			@map = @m.times.map { @file.gets.split.map(&:to_i) }
+			else
+				@positive = @file.gets.chomp.to_i
+				@map = @m.times.map { @n.times.map { rand(0..MAX_CRITERIA_VALUE) } }
+				if @positive == 1
+					i = rand(0...(@m - 1))
+					equalize(i)
+				end
   		end
   		if @type == :quasy_order
   			@range = @file.gets.split.map(&:to_i)
@@ -28,14 +35,6 @@ class CriteriaMapFactory
   				(_start-s)..._start
   			end
   		end
-  		if @generate == 0
-	  		@positive = @file.gets.chomp.to_i
-	  		@map = @m.times.map { @n.times.map { rand(0..MAX_CRITERIA_VALUE) } }
-	  		if @positive == 1
-	  			i = rand(0...(@m - 1))
-	  			equalize(i)
-  			end
-			end
 			CriteriaMap.new(type: @type, map: @map, classes: @range)
   	end
   end

@@ -17,7 +17,7 @@
     </script>
 </head>
 <body>
-<div>
+<div style="width: 680px; margin: auto;">
     <H3>Task generator</H3>
     <form id="main_form" v-on:submit="download($event)">
         <div class="form-group">
@@ -25,6 +25,7 @@
             <input type="number" class="form-control" id="task_number" min="1" max="150" v-model="task_count">
         </div>
         <div v-for="task in tasks">
+            <h4>Завдання {{ $index + 1 }}</h4>
             <div class="form-group">
                 <label>
                     <input type="checkbox" v-model="task.hand_mod">
@@ -37,6 +38,12 @@
                 <span class="help-block">Матрицю потрібно вводити по рядкам і елементи розділяти пробілами</span>
             </div>
             <div v-else>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" v-model="task.non_zero">
+                        Гарантовано хоча б одина альтернатива краща за іншу.
+                    </label>
+                </div>
                 <div class="form-group">
                     <label>Кількість альтернатив</label>
                     <input type="number" class="form-control" v-model="task.alt_count">
@@ -66,7 +73,7 @@
             </div>
             <hr>
         </div>
-        <button :click="generate">Згенерувати файл</button>
+        <button type="submit" class="btn btn-default">Згенерувати файл</button>
     </form>
 </div>
 <script>
@@ -109,8 +116,7 @@
                         type: this.criteria_map_types[0].name,
                         hand_mod: false,
                         matrix: '',
-                        non_zero_count: 0,
-                        use_non_zero: false,
+                        non_zero: false,
                         classes: []
                     });
                 }
@@ -131,6 +137,9 @@
                             return '';
                         }
                         buf += "{0}\n".supplant([task.matrix]);
+                        console.log(buf)
+                    } else {
+                        buf += "{0}\n".supplant([task.non_zero ? 1 : 0])
                     }
                     if(this.showClasses(i)){
                         if(this.isClassesValid(i)){
@@ -143,9 +152,11 @@
                 return buf;
             },
             download: function(event){
-                var element = document.createElement('a');
-                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.generate()));
+                event.preventDefault();
+                var file = this.generate();
                 if(this.can_parse){
+                    var element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(file));
                     element.setAttribute('download', 'test.txt');
 
                     element.style.display = 'none';
@@ -155,7 +166,6 @@
 
                     document.body.removeChild(element);
                 }
-                event.preventDefault();
             },
             isMatrixValid: function(matrix){
                 var lines = matrix.split("\n");
@@ -184,33 +194,34 @@
                 this.can_parse = false;
             },
             showClasses: function(index){
-                return this.tasks[generate_input_file].type == 'quasy_order';
+                console.log(index)
+                return this.tasks[index].type == 'quasy_order';
             },
             addClass: function(index){
-                console.log(generate_input_file);
-                this.tasks[generate_input_file].classes.push(1);
+                console.log(index);
+                this.tasks[index].classes.push(1);
             },
             isClassesValid: function(index){
-                var task = this.tasks[generate_input_file];
+                var task = this.tasks[index];
                 var classes = task.classes;
                 var sum = 0;
                 for(var i in classes){
                     sum += classes[i] * 1;
                 }
-                return sum == this.criteriaCount(generate_input_file);
+                return sum == this.criteriaCount(index);
             },
             criteriaCount: function(index){
-                var task = this.tasks[generate_input_file];
+                var task = this.tasks[index];
                 if(task.hand_mod){
-                    return task.map.split("\n").split(' ').length;
+                    return task.matrix.split("\n")[0].split(' ').length;
                 } else {
                     return task.crit_count;
                 }
             },
             alternativeCount: function(index){
-                var task = this.tasks[generate_input_file];
+                var task = this.tasks[index];
                 if(task.hand_mod){
-                    return task.map.split("\n").length;
+                    return task.matrix.split("\n").length;
                 } else {
                     return task.alt_count;
                 }

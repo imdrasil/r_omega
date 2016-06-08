@@ -22,14 +22,14 @@ class ROmegaSerializer < Serializer
   def render_html
     partials = @relations.each_with_index.map { |rel, i| html_partial_render(rel, i) }
     if separate_files?
-      partials.each do |partial|
+      partials.each_with_index do |partial, i|
         File.open(File.join(destination_folder, "task_#{i}.html"), 'w') do |f|
           @partials = [partial]
           f.write(parse_erb(template_file, binding))
         end
       end
     else
-      File.open(File.join(destination_folder, 'tasks.html'), 'w') do |f|
+      File.open(File.join(destination_folder, 'answers.html'), 'w') do |f|
         @partials = partials
         f.write(parse_erb(template_file, binding))
       end

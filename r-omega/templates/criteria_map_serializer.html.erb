@@ -1,14 +1,16 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="utf-8">
     <title>Завдання</title>
   </head>
   <body>
-    <div>
+    <div style="width: 680px; margin: auto">
+      <h3>Відносна симетрія. Відношення <%= RelationDecorator.r_omega %></h3>
       <% @partials.each do |partial| %>
         <%= partial %>
+        <hr>
       <% end %>
-      <hr>
     </div>
   </body>
 </html>

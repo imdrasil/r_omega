@@ -1,5 +1,18 @@
 <div>
   <h3>Варіант <%= @index + 1 %></h3>
+  <div>
+    Початковий вигляд матриці критеріїв альтернатив:
+    <%= CriteriaMapDecorator.to_table(@current_relation.map) %>
+  </div>
+  <div>
+    Критерії <b><%= RelationDecorator.criteria_type_name(@current_relation.map) %>.</b>
+  </div>
+  <% if @current_relation.map.quasy_order? %>
+    <div>
+      Класи розбиття:
+      <%= @current_relation.map.classes.map(&:count).join(' ') %>
+    </div>
+  <% end %>
   <p>Оскільки критерії <%= CriteriaMapDecorator.criteria_type_name(@current_relation.map) %>, то за формулою</p>
   <p>
     <%= CriteriaMapDecorator.I_formula_html(@current_relation.map) %>

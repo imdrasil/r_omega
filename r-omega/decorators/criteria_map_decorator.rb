@@ -24,6 +24,14 @@ class CriteriaMapDecorator
       end
     end
 
+    def to_table(map)
+      %Q(
+        <table style="margin: auto;">
+        #{map.origin_map.map { |row| '<tr>' + row.map { |cel| "<td>#{cel}</td>" }.join(' ') + '</tr>' }.join("\n")}
+        </table>
+      )
+    end
+
     def I_formula_html(map)
       i_formulas[map.type] ||= File.open(File.join(App.template_path, 'formulas', FORMULA_FILES[:i][map.type])).read
     end

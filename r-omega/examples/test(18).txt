@@ -1,0 +1,19 @@
+3
+quasy_order
+4
+5
+0
+1
+2 2 1
+strict_order
+3
+4
+0
+0
+equivalence
+3
+4
+1
+1 2 3 4
+5 6 7 8
+3 4 1 9

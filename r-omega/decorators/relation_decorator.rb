@@ -13,7 +13,7 @@ class RelationDecorator
 
     def to_table(rel)
       %Q(
-        <table>
+        <table style="margin: auto;">
         #{rel.graph.map { |row| '<tr>' + row.map { |cel| "<td>#{cel}</td>" }.join(' ') + '</tr>' }.join("\n")}
         </table>
       )

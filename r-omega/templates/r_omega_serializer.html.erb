@@ -4,23 +4,22 @@
   <meta charset="utf-8">
   <title>Розвязання</title>
   <style type="text/css">
-    #math, #pre, #post {
-      font-size: 4em;
-    }
     body {
       font-family: "DejaVu Serif",serif;
     }
   </style>
 </head>
 <body>
-  <div>
-    <h3>Розвязання завдань по пошуку відношення <%= RelationDecorator.r_omega %></h3>
-    <span>Розвязання основане на теорії з книги <i>"Павлов А. А., Гриша С. Н., Томашевский В. Н.-Основы системного анализа и проектирования АСУ
- [Учеб. пособие по спец. ''Автоматизир. системы обраб. информ. и управления''-Выща шк (1991).djvu"</i>.</span>
+  <div style="width: 680px; margin: auto">
+    <div>
+      <h3>Розвязання завдань по пошуку відношення <%= RelationDecorator.r_omega %></h3>
+      <span>Розвязання основане на теорії з книги <i>"Павлов А. А., Гриша С. Н., Томашевский В. Н.-Основы системного анализа и проектирования АСУ
+    [Учеб. пособие по спец. ''Автоматизир. системы обраб. информ. и управления''-Выща шк (1991).djvu"</i>.</span>
+    </div>
+    <% @partials.each do |partial| %>
+      <%= partial %>
+      <hr>
+    <% end %>
   </div>
-  <% @partials.each do |partial| %>
-    <%= partial %>
-    <hr>
-  <% end %>
 </body>
 </html>

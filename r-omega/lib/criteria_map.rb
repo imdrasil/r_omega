@@ -1,5 +1,5 @@
 class CriteriaMap
-  attr_accessor :map, :classes, :type
+  attr_accessor :map, :classes, :type, :origin_map
 
   ACCEPTABLE_TYPES = %i(equivalence strict_order quasy_order).freeze
 
@@ -12,6 +12,7 @@ class CriteriaMap
   def initialize(options)
     @classes = options[:classes] || [0...options[:map].first.size]
     @type = options[:type]
+    @origin_map = options[:map].map { |r| r.clone }
     @map = convert_map(options[:map])
 
     raise Exception if !ACCEPTABLE_TYPES.include?(@type) || @map.nil? || @map.empty?
@@ -51,6 +52,10 @@ class CriteriaMap
     @map.first.count
   end
 
+  def origin_criteria_count
+    @origin_map.first.size
+  end
+
   def print
     @map.map { |row| row.join(' ') }.join("\n")
   end
@@ -67,22 +72,21 @@ class CriteriaMap
     end
 
     def parse_file(path) # TODO: need checking
-      arr = []
       File.open(path, 'r') do |f|
-        count = f.gets.to_i
-        arr = count.times.map do
-                alt = f.gets.to_i
-                crit = f.gets.to_i
-                type = f.gets.strip.to_sym
-                matrix = crit.times.map { f.gets.split(' ').map(&:to_i) }
-                classes = parse_classes_from_file(f, type)
-                CriteriaMap.new(classes: classes, map: matrix, type: type)
-              end
+        f.gets.to_i.times.map { parse_criteria_map(f) }
       end
-      arr
     end
 
     private
+
+    def parse_criteria_map(file)
+      type = file.gets.strip.to_sym
+      alt = file.gets.to_i
+      crit = file.gets.to_i
+      matrix = alt.times.map { file.gets.split(' ').map(&:to_i) }
+      classes = parse_classes_from_file(file, type)
+      CriteriaMap.new(classes: classes, map: matrix, type: type)
+    end
 
     def parse_classes_from_file(file, type)
       if type == :quasy_order

@@ -1,20 +1,20 @@
 <div>
   <h3>Варіант <%= @index + 1 %></h3>
-  <p>
-    Нехай задано <b><%= @current_task.alternative_count %></b> альтернатив та <b><%= @current_task.criteria_count%></b>
-    критеріїв які <%= CriteriaMapDecorator.criteria_type_name(@current_task) %>. Необхідно побудувати відношення <b>R-омега</b>.
-  </p>
-  <p>
+  <div>
+    Нехай задано <b><%= @current_task.alternative_count %></b> альтернатив та <b><%= @current_task.origin_criteria_count%></b>
+    критеріїв які <%= CriteriaMapDecorator.criteria_type_name(@current_task) %>. Необхідно побудувати відношення <%= RelationDecorator.r_omega %>.
+  </div>
+  <div>
     <table>
       <tr>
         <td>
 
         </td>
-        <% @current_task.criteria_count.times do |i| %>
+        <% @current_task.origin_criteria_count.times do |i| %>
           <td>Крит <%= i + 1 %></td>
         <% end %>
       </tr>
-      <% @current_task.map.each_with_index do |row, i| %>
+      <% @current_task.origin_map.each_with_index do |row, i| %>
         <tr>
           <td>Альт <%= i + 1 %></td>
           <% row.each do |cel| %>
@@ -23,12 +23,12 @@
         </tr>
       <% end %>
     </table>
-  </p>
+  </div>
   <% if @current_task.quasy_order? %>
-    <p>
+    <div>
       <table>
         <tr>
-          <td colspan="<%= @current_task.classes.size + 1 %>">Класи</td>
+          <td colspan="<%= @current_task.classes.size + 1 %>" style="text-align: right;">Класи</td>
         </tr>
         <tr>
           <td>Критерії</td>
@@ -43,6 +43,6 @@
           <% end %>
         </tr>
       </table>
-    </p>
+    </div>
   <% end %>
 </div>

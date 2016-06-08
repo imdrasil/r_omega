@@ -2,23 +2,21 @@ require 'serializer'
 
 class CriteriaMapSerializer < Serializer
   def initialize(maps, options = {})
-    @maps = Array.wrap(maps)
+    @maps = maps.is_a?(Array) ? maps : [maps]
     super(options)
-  end
-
-  def serialize
-    render_txt
-    render_html if verbose?
   end
 
   def html_partial_render(map)
     @current_task = map
-    ERB.new(partial_template_file, 0, '>').result
+    html = parse_erb(partial_template_file, binding)
+    @index += 1
+    html
   end
 
   def txt_partial_render(map)
-    buf = [map.type, map.alternative_count, map.criteria_count, map.map { |row| row.join(' ') }.join("\n")].join("\n")
-    buf += "\n#{map.classes.map(&:count).join(' ')}\n" if map.quasy_order?
+    buf = [map.type, map.alternative_count, map.origin_criteria_count,
+           map.origin_map.map { |row| row.join(' ') }.join("\n")].join("\n")
+    buf += "\n#{map.classes.map(&:count).join(' ')}" if map.quasy_order?
     buf
   end
 
@@ -40,19 +38,19 @@ class CriteriaMapSerializer < Serializer
   end
 
   def render_html
+    @index = 0
     partials = @maps.map { |map| html_partial_render(map) }
     if separate_files?
       partials.each_with_index do |partial, i|
         File.open(File.join(destination_folder, "task_#{i}.html"), 'w') do |f|
           @partials = [partial]
-          @index = i
-          f.write(parse_erb(template_file))
+          f.write(parse_erb(template_file, binding))
         end
       end
     else
       File.open(File.join(destination_folder, 'tasks.html'), 'w') do |f|
         @partials = partials
-        f.write(parse_erb(template_file))
+        f.write(parse_erb(template_file, binding))
       end
     end
   end
