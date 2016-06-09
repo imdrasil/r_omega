@@ -27,7 +27,7 @@ class CriteriaMapDecorator
     def to_table(map)
       %Q(
         <table style="margin: auto;">
-        #{map.origin_map.map { |row| '<tr>' + row.map { |cel| "<td>#{cel}</td>" }.join(' ') + '</tr>' }.join("\n")}
+        #{map.map { |row| '<tr>' + row.map { |cel| "<td>#{cel}</td>" }.join(' ') + '</tr>' }.join("\n")}
         </table>
       )
     end
