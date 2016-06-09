@@ -1,6 +1,9 @@
 require 'relation'
 
 class ROmega < Relation
+
+  attr_accessor :graph
+  
   def initialize(criteria_map)
     @map = criteria_map
     @graph = Array.new(@map.alternative_count) { Array.new(@map.alternative_count, -1) }
